@@ -1,0 +1,20 @@
+[
+  {
+    "remote": "github",
+    "repository": "BlissRoms-Devices/android_device_google_gs101",
+    "target_path": "device/google/gs101",
+    "revision": "typhoon"
+  },
+  {
+    "remote": "github",
+    "repository": "BlissRoms-Devices/android_kernel_google_gs101",
+    "target_path": "kernel/google/gs101/private/gs-google",
+    "revision": "typhoon"
+  },
+  {
+    "remote": "gitlab",
+    "repository": "BlissLabs/BlissRoms/proprietary_vendor_google",
+    "target_path": "vendor/google",
+    "revision": "typhoon"
+  }
+]
