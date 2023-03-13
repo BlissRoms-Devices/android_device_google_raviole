@@ -11,8 +11,8 @@ $(call inherit-product, vendor/bliss/config/common_full_phone.mk)
 # Inherit device configuration
 $(call inherit-product, device/google/raviole/aosp_oriole.mk)
 $(call inherit-product, device/google/gs101/lineage_common.mk)
-$(call inherit-product, device/google/raviole/device-lineage.mk)
-$(call inherit-product, vendor/gms/products/gms.mk)
+
+include device/google/raviole/oriole/device-lineage.mk
 
 # Device identifier. This must come after all inclusions
 PRODUCT_BRAND := google
@@ -25,8 +25,8 @@ TARGET_SCREEN_WIDTH := 1080
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     TARGET_PRODUCT=oriole \
-    PRIVATE_BUILD_DESC="oriole-user 13 TP1A.221105.002 9080065 release-keys"
+    PRIVATE_BUILD_DESC="oriole-user 13 TQ1A.230205.002 9471150 release-keys"
 
-BUILD_FINGERPRINT := google/oriole/oriole:13/TP1A.221105.002/9080065:user/release-keys
+BUILD_FINGERPRINT := google/oriole/oriole:13/TQ1A.230205.002/9471150:user/release-keys
 
 $(call inherit-product, vendor/google/oriole/oriole-vendor.mk)

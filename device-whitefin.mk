@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+TARGET_KERNEL_DIR ?= device/google/raviole-kernel
+TARGET_BOARD_KERNEL_HEADERS := device/google/raviole-kernel/kernel-headers
+
 $(call inherit-product-if-exists, vendor/google_devices/raviole/prebuilts/device-vendor-whitefin.mk)
 $(call inherit-product-if-exists, vendor/google_devices/gs101/prebuilts/device-vendor.mk)
 $(call inherit-product-if-exists, vendor/google_devices/gs101/proprietary/device-vendor.mk)
@@ -26,6 +29,8 @@ include hardware/google/pixel/vibrator/drv2624/device.mk
 include device/google/raviole/audio/whitefin/audio-tables.mk
 include device/google/gs101/bluetooth/bluetooth.mk
 
+# go/lyric-soong-variables
+$(call soong_config_set,lyric,camera_hardware,slider)
 $(call soong_config_set,lyric,tuning_product,slider)
 $(call soong_config_set,google3a_config,target_device,slider)
 
@@ -73,10 +78,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
 	NfcNci \
 	Tag \
-	android.hardware.nfc@1.2-service.st
-
-DEVICE_MANIFEST_FILE += \
-	device/google/raviole/nfc/manifest_nfc.xml
+	android.hardware.nfc-service.st
 
 # PowerStats HAL
 PRODUCT_SOONG_NAMESPACES += device/google/raviole/powerstats/whitefin

@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+TARGET_KERNEL_DIR ?= device/google/raviole-kernel
+TARGET_BOARD_KERNEL_HEADERS := device/google/raviole-kernel/kernel-headers
+
 $(call inherit-product-if-exists, vendor/google_devices/raviole/prebuilts/device-vendor-oriole.mk)
 $(call inherit-product-if-exists, vendor/google_devices/gs101/prebuilts/device-vendor.mk)
 $(call inherit-product-if-exists, vendor/google_devices/gs101/proprietary/device-vendor.mk)
@@ -38,6 +41,8 @@ else
 include device/google/gs101/fingerprint/udfps_factory.mk
 endif
 
+# go/lyric-soong-variables
+$(call soong_config_set,lyric,camera_hardware,oriole)
 $(call soong_config_set,lyric,tuning_product,oriole)
 $(call soong_config_set,google3a_config,target_device,oriole)
 
@@ -57,6 +62,7 @@ PRODUCT_COPY_FILES += \
 # Thermal Config
 PRODUCT_COPY_FILES += \
 	device/google/raviole/thermal_info_config_oriole.json:$(TARGET_COPY_OUT_VENDOR)/etc/thermal_info_config.json \
+	device/google/raviole/thermal_info_config_charge_oriole.json:$(TARGET_COPY_OUT_VENDOR)/etc/thermal_info_config_charge.json \
 	device/google/raviole/thermal_info_config_oriole_WHI_A.json:$(TARGET_COPY_OUT_VENDOR)/etc/thermal_info_config_WHI_A.json
 
 # Power HAL config
@@ -65,7 +71,8 @@ PRODUCT_COPY_FILES += \
 
 # Bluetooth
 PRODUCT_PRODUCT_PROPERTIES += \
-    persist.bluetooth.a2dp_aac.vbr_supported=true
+    persist.bluetooth.a2dp_aac.vbr_supported=true \
+    persist.bluetooth.firmware.selection=BCM.hcd
 
 # Bluetooth Tx power caps for oriole
 PRODUCT_COPY_FILES += \
@@ -117,7 +124,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
 	NfcNci \
 	Tag \
-	android.hardware.nfc@1.2-service.st
+	android.hardware.nfc-service.st
 
 # SecureElement
 PRODUCT_PACKAGES += \
@@ -131,7 +138,6 @@ PRODUCT_COPY_FILES += \
 	device/google/raviole/nfc/libse-gto-hal2.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libse-gto-hal2.conf
 
 DEVICE_MANIFEST_FILE += \
-	device/google/raviole/nfc/manifest_nfc.xml \
 	device/google/raviole/nfc/manifest_se.xml
 
 # Vibrator HAL
@@ -165,7 +171,7 @@ endif
 
 # Increment the SVN for any official public releases
 PRODUCT_VENDOR_PROPERTIES += \
-    ro.vendor.build.svn=40
+    ro.vendor.build.svn=43
 
 # Set support hide display cutout feature
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -210,6 +216,8 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Bluetooth HAL
 PRODUCT_PACKAGES += \
 	bt_vendor.conf
+PRODUCT_COPY_FILES += \
+	device/google/raviole/bluetooth/bt_vendor_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth/bt_vendor_overlay.conf
 
 # tetheroffload HAL
 PRODUCT_PACKAGES += \
@@ -235,9 +243,34 @@ PRODUCT_PRODUCT_PROPERTIES += \
     persist.bluetooth.le_audio_test=false
 endif
 
+# declare use of spatial audio
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.audio.spatializer_enabled=true
+
+PRODUCT_PACKAGES += \
+	libspatialaudio
+
 # Device features
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
+
+# Dolby integration
+-include vendor/dolby/ds/dolby-buildspec.mk
+$(call inherit-product-if-exists, vendor/dolby/ds/dolby-product.mk)
+#  overwrite file coming from device/google/gs101/media_codecs_bo_c2.xml
+PRODUCT_COPY_FILES := \
+    device/google/raviole/media_codecs_dolby_c2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_c2.xml \
+    $(PRODUCT_COPY_FILES)
+
+PRODUCT_RESTRICT_VENDOR_FILES := false
+
+# Enable adpf cpu hint session for SurfaceFlinger
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    debug.sf.enable_adpf_cpu_hint=true
+
+# Bluetooth OPUS codec
+PRODUCT_PRODUCT_PROPERTIES += \
+    persist.bluetooth.opus.enabled=true
 
 # HBM
 PRODUCT_PACKAGES += \
